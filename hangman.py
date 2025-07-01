@@ -1,5 +1,6 @@
 import json
 import random
+import re
 import string
 from collections import Counter
 from typing import List, Optional, Set
@@ -188,6 +189,9 @@ class BaselineHangmanSolver(HangmanSolver):
         # This shouldn't happen if dictionary is proper
         return "a"
 
+    def is_all_underscores(self, pattern: str) -> bool:
+        return all(char == "_" for char in pattern)
+
     def find_matching_words(self, pattern: str) -> List[str]:
         """
         Find all dictionary words that match the given pattern.
@@ -201,18 +205,27 @@ class BaselineHangmanSolver(HangmanSolver):
         matching_words = []
         pattern_length = len(pattern)
 
+        if self.is_all_underscores(pattern):
+            return [w for w in self.dictionary if len(w) == pattern_length]
+
+        regex = re.compile(f"{pattern.replace('_', '[a-z]')}")
         for word in self.dictionary:
             if len(word) != pattern_length:
                 continue
-
-            match = True
-            for i, char in enumerate(pattern):
-                if char != "_" and word[i] != char:
-                    match = False
-                    break
-
-            if match:
+            if regex.match(word):
                 matching_words.append(word)
+
+        if len(matching_words) > 0:
+            return matching_words
+
+        regex = re.compile(f"({pattern.replace('_', '[a-z]')})")
+        for word in self.dictionary:
+            if len(word) <= pattern_length:
+                continue
+
+            match = regex.search(word)
+            if match:
+                matching_words.append(match.group(1))
 
         return matching_words
 
