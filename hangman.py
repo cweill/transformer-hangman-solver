@@ -5,9 +5,18 @@ import string
 from collections import Counter
 from typing import List, Optional, Set
 
+import numba as nb
 from tqdm import tqdm
 
 # Remove requests import since we're not using an API
+
+
+@nb.njit(nopython=True, cache=True)
+def is_all_underscores(pattern: str) -> bool:
+    for char in pattern:
+        if char != "_":
+            return False
+    return True
 
 
 class LocalHangmanGame:
@@ -189,9 +198,6 @@ class BaselineHangmanSolver(HangmanSolver):
         # This shouldn't happen if dictionary is proper
         return "a"
 
-    def is_all_underscores(self, pattern: str) -> bool:
-        return all(char == "_" for char in pattern)
-
     def find_matching_words(self, pattern: str) -> List[str]:
         """
         Find all dictionary words that match the given pattern.
@@ -205,7 +211,7 @@ class BaselineHangmanSolver(HangmanSolver):
         matching_words = []
         pattern_length = len(pattern)
 
-        if self.is_all_underscores(pattern):
+        if is_all_underscores(pattern):
             return [w for w in self.dictionary if len(w) == pattern_length]
 
         regex = re.compile(f"{pattern.replace('_', '[a-z]')}")
