@@ -1,0 +1,17 @@
+[project]
+name = "wsq-prep"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.3",
+    "nltk>=3.9.1",
+    "numpy<2",
+    "pandas>=2.3.0",
+    "regex>=2024.11.6",
+    "tqdm>=4.67.1",
+]
