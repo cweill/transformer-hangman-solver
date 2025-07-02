@@ -9,6 +9,7 @@ import regex as re
 from tqdm import tqdm
 
 # Remove requests import since we're not using an API
+MAX_WORD_LENGTH = 10
 
 
 @nb.njit(nopython=True, cache=True)
@@ -25,8 +26,12 @@ class LocalHangmanGame:
     Uses test_dictionary.txt for word selection.
     """
 
-    def __init__(self, test_dictionary_path: str = "test_dictionary.txt"):
-        self.test_words = self.load_dictionary(test_dictionary_path)
+    def __init__(self, test_dictionary_path: str = "train_dictionary.txt"):
+        self.test_words = [
+            word
+            for word in self.load_dictionary(test_dictionary_path)
+            if len(word) == MAX_WORD_LENGTH
+        ]
         self.current_word = ""
         self.guessed_letters = set()
         self.incorrect_guesses = 0
@@ -116,7 +121,11 @@ class HangmanSolver:
         Args:
             dictionary_path: Path to the training dictionary file
         """
-        self.dictionary = self.load_dictionary(dictionary_path)
+        self.dictionary = [
+            word
+            for word in self.load_dictionary(dictionary_path)
+            if len(word) == MAX_WORD_LENGTH
+        ]
         self.full_dictionary_common_letter_sorted = {
             i: self.calculate_letter_frequencies(self.dictionary, length=i)
             for i in range(1, 30)
