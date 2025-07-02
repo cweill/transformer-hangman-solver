@@ -1,11 +1,11 @@
 import json
 import random
-import re
 import string
 from collections import Counter
 from typing import List, Optional, Set
 
 import numba as nb
+import regex as re
 from tqdm import tqdm
 
 # Remove requests import since we're not using an API
@@ -117,16 +117,17 @@ class HangmanSolver:
             dictionary_path: Path to the training dictionary file
         """
         self.dictionary = self.load_dictionary(dictionary_path)
-        self.full_dictionary_common_letter_sorted = self.calculate_letter_frequencies(
-            self.dictionary
-        )
+        self.full_dictionary_common_letter_sorted = {
+            i: self.calculate_letter_frequencies(self.dictionary, length=i)
+            for i in range(1, 30)
+        }
 
     def load_dictionary(self, path: str) -> List[str]:
         """Load dictionary words from file"""
         with open(path, "r") as f:
             return [word.strip().lower() for word in f.readlines()]
 
-    def calculate_letter_frequencies(self, words: List[str]) -> List[str]:
+    def calculate_letter_frequencies(self, words: List[str], length: int) -> List[str]:
         """
         Calculate letter frequencies across all words and return sorted list.
 
@@ -138,6 +139,8 @@ class HangmanSolver:
         """
         letter_counter = Counter()
         for word in words:
+            if len(word) != length:
+                continue
             for letter in set(word):  # Count each letter once per word
                 if letter in string.ascii_lowercase:
                     letter_counter[letter] += 1
@@ -191,12 +194,12 @@ class BaselineHangmanSolver(HangmanSolver):
                     return letter
 
         # No matching words or all letters guessed - use full dictionary
-        for letter in self.full_dictionary_common_letter_sorted:
+        for letter in self.full_dictionary_common_letter_sorted[len(current_word)]:
             if letter not in guessed_letters:
                 return letter
 
         # This shouldn't happen if dictionary is proper
-        return "a"
+        raise ValueError("No matching words or all letters guessed")
 
     def find_matching_words(self, pattern: str) -> List[str]:
         """
@@ -211,20 +214,20 @@ class BaselineHangmanSolver(HangmanSolver):
         matching_words = []
         pattern_length = len(pattern)
 
-        if is_all_underscores(pattern):
-            return [w for w in self.dictionary if len(w) == pattern_length]
+        # if is_all_underscores(pattern):
+        #     return [w for w in self.dictionary if len(w) == pattern_length]
 
-        regex = re.compile(f"{pattern.replace('_', '[a-z]')}")
+        regex = re.compile(f"{pattern.replace('_', '.')}")
         for word in self.dictionary:
             if len(word) != pattern_length:
                 continue
-            if regex.match(word):
+            if regex.fullmatch(word):
                 matching_words.append(word)
 
         if len(matching_words) > 0:
             return matching_words
 
-        regex = re.compile(f"({pattern.replace('_', '[a-z]')})")
+        regex = re.compile(f"({pattern.replace('_', '.')})")
         for word in self.dictionary:
             if len(word) <= pattern_length:
                 continue
@@ -233,6 +236,25 @@ class BaselineHangmanSolver(HangmanSolver):
             if match:
                 matching_words.append(match.group(1))
 
+        if len(matching_words) > 0:
+            return matching_words
+
+        # i = 1
+        # while len(pattern) <= 5 and len(pattern) - i > 3:
+        #     subpatterns = []
+        #     for j in range(len(pattern) - i):
+        #         subpatterns.append(pattern[j : j + i])
+        #     for subpattern in subpatterns:
+        #         regex = re.compile(f"({subpattern.replace('_', '.')})")
+        #         for word in self.dictionary:
+        #             if len(word) <= len(subpattern):
+        #                 continue
+        #             match = regex.search(word)
+        #             if match:
+        #                 matching_words.append(match.group(1))
+
+        # if len(matching_words) > 0:
+        #     return matching_words
         return matching_words
 
     def calculate_letter_frequencies_in_words(
@@ -252,42 +274,10 @@ class BaselineHangmanSolver(HangmanSolver):
 
         for word in words:
             for letter in set(word):
-                if letter in string.ascii_lowercase and letter not in guessed_letters:
+                if letter not in guessed_letters:
                     letter_counter[letter] += 1
 
         return letter_counter.most_common()
-
-
-class BetterHangmanSolver(BaselineHangmanSolver):
-    def guess(self, current_word: str, guessed_letters: Set[str]) -> str:
-        """
-        Better guessing strategy:
-        1. Find all dictionary words matching the current pattern
-        2. Calculate letter frequencies in matching words
-        3. Guess the most frequent unguessed letter
-        4. If no matches, use full dictionary frequencies
-        """
-        # Find all words matching the current pattern
-        matching_words = self.find_matching_words(current_word)
-
-        if matching_words:
-            # Calculate letter frequencies in matching words
-            letter_frequencies = self.calculate_letter_frequencies_in_words(
-                matching_words, guessed_letters
-            )
-
-            # Return the most frequent unguessed letter
-            for letter, _ in letter_frequencies:
-                if letter not in guessed_letters:
-                    return letter
-
-        # No matching words or all letters guessed - use full dictionary
-        for letter in self.full_dictionary_common_letter_sorted:
-            if letter not in guessed_letters:
-                return letter
-
-        # This shouldn't happen if dictionary is proper
-        raise ValueError("No matching words or all letters guessed")
 
 
 class GameRunner:
@@ -357,8 +347,8 @@ class GameRunner:
 if __name__ == "__main__":
     # Initialize components
     game = LocalHangmanGame("test_dictionary.txt")
-    # solver = BaselineHangmanSolver("training_dictionary.txt")
-    solver = BetterHangmanSolver("training_dictionary.txt")
+    solver = BaselineHangmanSolver("training_dictionary.txt")
+    # solver = BetterHangmanSolver("training_dictionary.txt")
     runner = GameRunner(solver, game)
 
     # Run games to compute accuracy

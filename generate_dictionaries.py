@@ -48,7 +48,7 @@ N = len(get_english_words())
 
 
 def split_words_randomly(
-    words: List[str], train_size: int = N // 2, test_size: int = N // 2
+    words: List[str], train_size: int = N - 10000, test_size: int = 10000
 ) -> tuple[List[str], List[str]]:
     """
     Randomly split words into training and test sets with no overlap.
