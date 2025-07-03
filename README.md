@@ -47,12 +47,12 @@ The training dataset is created by:
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.243
-- **Validation Loss**: 0.305
-- **Overall Out of Sample Win Rate**: **63.0%**
+- **Training Loss**: 0.229
+- **Validation Loss**: 0.287
+- **Overall Out of Sample Win Rate**: **64.30%**
 
 ### Key Observations
-- **Consistent generalization**: 63.70% in-sample vs 63.00% out-of-sample performance
+- **Consistent generalization**: 65.13% in-sample vs 64.30% out-of-sample performance
 
 ## How It Works
 
