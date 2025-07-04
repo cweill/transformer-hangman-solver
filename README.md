@@ -12,7 +12,7 @@ This project implements a transformer-based approach to solve Hangman by:
 ## Architecture
 
 The model uses a **Transformer Encoder** architecture with the following specifications:
-- **Model Size**: 12.6M parameters
+- **Model Size**: 25.2M parameters
 - **Embedding Dimension**: 512
 - **Number of Heads**: 8
 - **Number of Layers**: 4
@@ -47,15 +47,15 @@ The training dataset is created by:
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.192
-- **Validation Loss**: 0.302
-- **In-Sample Win Rate**: **69.80%**
-- **Out-of-Sample Win Rate**: **68.10%**
+- **Training Loss**: 0.1686
+- **Validation Loss**: 0.3047
+- **In-Sample Win Rate**: **71.70%**
+- **Out-of-Sample Win Rate**: **69.80%**
 
 ### Key Observations
-- **Strong generalization**: 69.80% in-sample vs 68.10% out-of-sample performance
+- **Strong generalization**: 71.70% in-sample vs 69.80% out-of-sample performance
 - **Consistent performance**: Model maintains high win rates across different word sets
-- **Improved training**: Lower training loss indicates better model convergence
+- **Improved training**: Lower training loss and higher win rates indicate better model convergence
 
 ## How It Works
 
@@ -78,7 +78,7 @@ Result: SOLVED in 9 guesses
 
 - `hangman.ipynb`: Main training and evaluation notebook
 - `hangman.py`: Game implementation and baseline solver
-- `model.pth`: Trained transformer model (12.6M parameters)
+- `model.pth`: Trained transformer model (25.2M parameters)
 - `training_dictionary.txt`: 224,377 English words for training
 - `test_dictionary.txt`: Test words for evaluation
 - `generate_dictionaries.py`: Script to generate training data
