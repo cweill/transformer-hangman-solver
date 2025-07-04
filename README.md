@@ -47,14 +47,15 @@ The training dataset is created by:
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.211
-- **Validation Loss**: 0.303
-- **In-Sample Win Rate**: **68.10%**
-- **Out-of-Sample Win Rate**: **66.57%**
+- **Training Loss**: 0.192
+- **Validation Loss**: 0.302
+- **In-Sample Win Rate**: **69.80%**
+- **Out-of-Sample Win Rate**: **68.10%**
 
 ### Key Observations
-- **Strong generalization**: 68.10% in-sample vs 66.57% out-of-sample performance
+- **Strong generalization**: 69.80% in-sample vs 68.10% out-of-sample performance
 - **Consistent performance**: Model maintains high win rates across different word sets
+- **Improved training**: Lower training loss indicates better model convergence
 
 ## How It Works
 
@@ -82,16 +83,42 @@ Result: SOLVED in 9 guesses
 - `test_dictionary.txt`: Test words for evaluation
 - `generate_dictionaries.py`: Script to generate training data
 - `test.py`: Utility functions for testing
+- `train_dataset.pkl`: Pre-processed training dataset (2.0GB)
+- `val_dataset.pkl`: Pre-processed validation dataset (148MB)
+- `pyproject.toml`: Project configuration and dependencies
+- `uv.lock`: Lock file for reproducible dependency management
 
 ## Requirements
 
-- PyTorch
-- NumPy
-- Matplotlib
-- tqdm
-- pandas
+- **Python**: >=3.12
+- **PyTorch**: >=2.7.1
+- **NumPy**: <2
+- **Matplotlib**: >=3.10.3
+- **tqdm**: >=4.67.1
+- **pandas**: >=2.3.0
+- **Jupyter**: >=1.1.1
 
-## Usage
+## Setup and Usage
+
+### Installation
+This project uses `uv` for dependency management. To set up:
+
+1. **Install uv** (if not already installed):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   uv sync
+   ```
+
+3. **Activate the virtual environment**:
+   ```bash
+   source .venv/bin/activate
+   ```
+
+### Usage
 
 1. **Training**: Run the `hangman.ipynb` notebook to train the model
 2. **Inference**: Use the trained model for interactive hangman solving
