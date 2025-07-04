@@ -14,5 +14,6 @@ dependencies = [
     "numpy<2",
     "pandas>=2.3.0",
     "regex>=2024.11.6",
+    "torch>=2.7.1",
     "tqdm>=4.67.1",
 ]
