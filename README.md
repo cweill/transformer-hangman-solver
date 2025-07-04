@@ -12,8 +12,8 @@ This project implements a transformer-based approach to solve Hangman by:
 ## Architecture
 
 The model uses a **Transformer Encoder** architecture with the following specifications:
-- **Model Size**: 6.9M parameters
-- **Embedding Dimension**: 320
+- **Model Size**: 12.6M parameters
+- **Embedding Dimension**: 512
 - **Number of Heads**: 8
 - **Number of Layers**: 4
 - **Vocabulary Size**: 29 characters (a-z, underscore, period, hyphen)
@@ -21,7 +21,7 @@ The model uses a **Transformer Encoder** architecture with the following specifi
 
 ### Key Components
 
-- **Character Embeddings**: Each character is embedded into a 320-dimensional space
+- **Character Embeddings**: Each character is embedded into a 512-dimensional space
 - **Positional Encoding**: Learned positional embeddings for sequence position
 - **Transformer Encoder**: Multi-head self-attention layers for contextual understanding
 - **Output Layer**: Linear projection to vocabulary size for character prediction
@@ -32,27 +32,29 @@ The model uses a **Transformer Encoder** architecture with the following specifi
 The training dataset is created by:
 1. Loading 224,377 words from the English dictionary
 2. Generating all possible masked combinations for each word (2^n combinations for n unique characters)
-3. Creating 10M training examples and 1.4M validation examples
+3. Creating 20M training examples and 1.4M validation examples
 4. Converting to integer sequences for model training
 
 ### Training Details
-- **Training Examples**: 10,000,000
+- **Training Examples**: 20,000,000
 - **Validation Examples**: 1,400,000
-- **Batch Size**: 512
-- **Learning Rate**: 0.001
-- **Optimizer**: AdamW
+- **Batch Size**: 4,096
+- **Learning Rate**: 3e-4 with cosine annealing scheduler
+- **Optimizer**: AdamW with weight decay 0.0
 - **Loss Function**: Cross-Entropy Loss
-- **Training Time**: ~17 minutes on A100 GPU
+- **Training Time**: ~6 minutes on H100 GPU
 
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.229
-- **Validation Loss**: 0.287
-- **Overall Out of Sample Win Rate**: **64.30%**
+- **Training Loss**: 0.211
+- **Validation Loss**: 0.303
+- **In-Sample Win Rate**: **68.10%**
+- **Out-of-Sample Win Rate**: **66.57%**
 
 ### Key Observations
-- **Consistent generalization**: 65.13% in-sample vs 64.30% out-of-sample performance
+- **Strong generalization**: 68.10% in-sample vs 66.57% out-of-sample performance
+- **Consistent performance**: Model maintains high win rates across different word sets
 
 ## How It Works
 
@@ -67,7 +69,7 @@ The training dataset is created by:
 ```
 Word: "reperplex"
 Masked: "_________"
-Guesses: ['e', 'r', 'd', 'a', 't', 's', 'l', 'p', 'x']
+Guesses: ['e', 'r', 'd', 'v', 'a', 't', 'l', 'p', 'x']
 Result: SOLVED in 9 guesses
 ```
 
@@ -75,7 +77,7 @@ Result: SOLVED in 9 guesses
 
 - `hangman.ipynb`: Main training and evaluation notebook
 - `hangman.py`: Game implementation and baseline solver
-- `model.pth`: Trained transformer model (6.9M parameters)
+- `model.pth`: Trained transformer model (12.6M parameters)
 - `training_dictionary.txt`: 224,377 English words for training
 - `test_dictionary.txt`: Test words for evaluation
 - `generate_dictionaries.py`: Script to generate training data
