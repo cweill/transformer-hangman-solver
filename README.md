@@ -42,20 +42,23 @@ The training dataset is created by:
 - **Learning Rate**: 3e-4 with cosine annealing scheduler
 - **Optimizer**: AdamW with weight decay 0.0
 - **Loss Function**: Cross-Entropy Loss
-- **Training Time**: ~6 minutes on H100 GPU
+- **Training Time**: ~21 minutes on H100 GPU (2 epochs)
+- **Training Steps**: 9,766 total steps
 
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.1686
-- **Validation Loss**: 0.3047
-- **In-Sample Win Rate**: **71.70%**
-- **Out-of-Sample Win Rate**: **69.80%**
+- **Training Loss**: 0.2623 (final epoch)
+- **Validation Loss**: 0.6699 (final epoch)
+- **Validation Accuracy**: 67.23% (final epoch)
+- **In-Sample Win Rate**: **74.33%**
+- **Out-of-Sample Win Rate**: **69.77%**
 
 ### Key Observations
-- **Strong generalization**: 71.70% in-sample vs 69.80% out-of-sample performance
+- **Strong generalization**: 74.33% in-sample vs 69.77% out-of-sample performance
 - **Consistent performance**: Model maintains high win rates across different word sets
 - **Improved training**: Lower training loss and higher win rates indicate better model convergence
+- **Training efficiency**: Model trained in ~21 minutes on H100 GPU (2 epochs)
 
 ## How It Works
 
