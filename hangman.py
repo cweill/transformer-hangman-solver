@@ -189,7 +189,7 @@ class BaselineHangmanSolver(HangmanSolver):
         4. If no matches, use full dictionary frequencies
         """
         # Find all words matching the current pattern
-        matching_words = self.find_matching_words(current_word)
+        matching_words = self.find_matching_words(current_word, guessed_letters)
 
         if matching_words:
             # Calculate letter frequencies in matching words
@@ -210,7 +210,7 @@ class BaselineHangmanSolver(HangmanSolver):
         # This shouldn't happen if dictionary is proper
         raise ValueError("No matching words or all letters guessed")
 
-    def find_matching_words(self, pattern: str) -> List[str]:
+    def find_matching_words(self, pattern: str, guessed_letters: Set[str]) -> List[str]:
         """
         Find all dictionary words that match the given pattern.
 
@@ -230,6 +230,8 @@ class BaselineHangmanSolver(HangmanSolver):
         for word in self.dictionary:
             if len(word) != pattern_length:
                 continue
+            # if any(letter in guessed_letters for letter in word):
+            #     continue
             if regex.fullmatch(word):
                 matching_words.append(word)
 
@@ -240,7 +242,8 @@ class BaselineHangmanSolver(HangmanSolver):
         for word in self.dictionary:
             if len(word) <= pattern_length:
                 continue
-
+            # if any(letter in guessed_letters for letter in word):
+            #     continue
             match = regex.search(word)
             if match:
                 matching_words.append(match.group(1))
