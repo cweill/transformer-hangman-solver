@@ -32,33 +32,33 @@ The model uses a **Transformer Encoder** architecture with the following specifi
 The training dataset is created by:
 1. Loading 224,377 words from the English dictionary
 2. Generating all possible masked combinations for each word (2^n combinations for n unique characters)
-3. Creating 20M training examples and 1.4M validation examples
+3. Creating 50M training examples and 1.4M validation examples
 4. Converting to integer sequences for model training
 
 ### Training Details
-- **Training Examples**: 20,000,000
-- **Validation Examples**: 1,400,000
+- **Training Examples**: 50,000,000
+- **Validation Examples**: 1,406,556
 - **Batch Size**: 4,096
-- **Learning Rate**: 3e-4 with cosine annealing scheduler
-- **Optimizer**: AdamW with weight decay 0.0
+- **Learning Rate**: 6e-4 with cosine annealing scheduler
+- **Optimizer**: AdamW with weight decay 0.1
 - **Loss Function**: Cross-Entropy Loss
-- **Training Time**: ~21 minutes on H100 GPU (2 epochs)
-- **Training Steps**: 9,766 total steps
+- **Training Time**: ~26 minutes on H100 GPU (1 epoch)
+- **Training Steps**: 12,208 total steps
 
 ## Performance Metrics
 
 ### Overall Performance
-- **Training Loss**: 0.2623 (final epoch)
-- **Validation Loss**: 0.6699 (final epoch)
-- **Validation Accuracy**: 67.23% (final epoch)
-- **In-Sample Win Rate**: **74.33%**
-- **Out-of-Sample Win Rate**: **69.77%**
+- **Training Loss**: 0.2624 (final epoch)
+- **Validation Loss**: 0.6247 (final epoch)
+- **Validation Accuracy**: 67.98% (final epoch)
+- **In-Sample Win Rate**: **76.07%**
+- **Out-of-Sample Win Rate**: **70.40%**
 
 ### Key Observations
-- **Strong generalization**: 74.33% in-sample vs 69.77% out-of-sample performance
+- **Strong generalization**: 76.07% in-sample vs 70.40% out-of-sample performance
 - **Consistent performance**: Model maintains high win rates across different word sets
 - **Improved training**: Lower training loss and higher win rates indicate better model convergence
-- **Training efficiency**: Model trained in ~21 minutes on H100 GPU (2 epochs)
+- **Training efficiency**: Model trained in ~26 minutes on H100 GPU (1 epoch)
 
 ## How It Works
 
