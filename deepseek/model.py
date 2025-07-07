@@ -482,6 +482,7 @@ class MLA(nn.Module):
         self.wkv_b.scale = None
         # self.wo = RowParallelLinear(self.n_heads * self.v_head_dim, self.dim)
         self.wo = nn.Linear(self.n_heads * self.v_head_dim, self.dim)
+        self.wo.NANOGPT_SCALE_INIT = 1
         self.softmax_scale = self.qk_head_dim**-0.5
         if args.max_seq_len > args.original_seq_len:
             mscale = 0.1 * args.mscale * math.log(args.rope_factor) + 1.0
@@ -639,6 +640,7 @@ class MLP(nn.Module):
         self.w1 = nn.Linear(dim, inter_dim)
         # self.w2 = RowParallelLinear(inter_dim, dim)
         self.w2 = nn.Linear(inter_dim, dim)
+        self.w2.NANOGPT_SCALE_INIT = 1
         # self.w3 = ColumnParallelLinear(dim, inter_dim)
         self.w3 = nn.Linear(dim, inter_dim)
 
@@ -930,6 +932,28 @@ class Transformer(nn.Module):
         self.head = nn.Linear(args.dim, args.vocab_size)
         self.register_buffer("freqs_cis", precompute_freqs_cis(args), persistent=False)
         self.padding_token_id = args.padding_token_id
+
+        # init params
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            std = 0.02  # roughly equivalent to 1/sqrt(d_model)
+            if hasattr(module, "NANOGPT_SCALE_INIT"):
+                std *= (2 * len(self.layers)) ** -0.05
+            torch.nn.init.normal_(
+                module.weight,
+                mean=0.0,
+                std=std,
+            )
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(
+                module.weight,
+                mean=0.0,
+                std=0.02,  # roughly equivalent to 1/sqrt(d_model)
+            )
 
     def clear_caches(self):
         """Clear all attention caches to prevent memory leaks."""
